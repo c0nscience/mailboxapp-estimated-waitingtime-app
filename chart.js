@@ -1,17 +1,19 @@
-/*global $:false */
+/*global $:false,jQuery:false */
 "use strict";
-$(document).ready(function () {
-    var chartWrapper = $("#chartWrapper");
-    var dateTimeFormat = "MM/DD/YYYY HH:mm";
+(function ($) {
+    var chartWrapper = $("#chartWrapper"),
+            chartElement = $("#chart"),
+            dateTimeFormat = "MM/DD/YYYY HH:mm",
+            previousPoint = null,
+            dataPoints = [
+                {dateTime: moment("02/07/2013 20:07", dateTimeFormat), queueSize: 270982},
+                {dateTime: moment("02/07/2013 22:15", dateTimeFormat), queueSize: 270900},
+                {dateTime: moment("02/08/2013 01:52", dateTimeFormat), queueSize: 270796},
+                {dateTime: moment("02/08/2013 02:16", dateTimeFormat), queueSize: 270776}
+            ],
+            firstDataPoint = dataPoints[0];
 
-    var dataPoints = [
-        {dateTime: moment("02/07/2013 20:07", dateTimeFormat), queueSize: 270982},
-        {dateTime: moment("02/07/2013 22:15", dateTimeFormat), queueSize: 270900},
-        {dateTime: moment("02/08/2013 01:52", dateTimeFormat), queueSize: 270796},
-        {dateTime: moment("02/08/2013 02:16", dateTimeFormat), queueSize: 270776}
-    ];
-
-    function generateSeries(dataPoints) {
+    function generateChartDataFromDataPoints() {
         var series = [];
         $.each(dataPoints, function (index, datePoint) {
             var dateTime = datePoint.dateTime,
@@ -19,14 +21,10 @@ $(document).ready(function () {
 
             var previousDataPoint = dataPoints[index - 1];
             if (previousDataPoint !== undefined) {
-                var dateTimeDiff = moment(previousDataPoint.dateTime).diff(dateTime) / 3600000;
-                var queueDiff = previousDataPoint.queueSize - queueSize;
+                var dateTimeDiff = moment(previousDataPoint.dateTime).diff(dateTime) / 3600000,
+                    queueDiff = previousDataPoint.queueSize - queueSize,
+                    decreaseRate = queueDiff / dateTimeDiff;
 
-                var decreaseRate = queueDiff / dateTimeDiff;
-
-                console.log("dateTimeDiff: " + dateTimeDiff +
-                            "; queueDiff: " + queueDiff +
-                            "; decreaseRate: " + decreaseRate + "/h");
                 series.push([index, decreaseRate]);
             }
         });
@@ -34,42 +32,14 @@ $(document).ready(function () {
         return series;
     }
 
-    var chartElement = $("#chart");
-    $.plot(chartElement, [
-        { data: generateSeries(dataPoints), label: "decreasing rate"}
-    ], {
-               series: {
-                   lines: { show: true,
-                       lineWidth: 2
-                   },
-                   points: { show: true,
-                       lineWidth: 2
-                   },
-                   shadowSize: 0
-               },
-               grid: {
-                   hoverable: true,
-                   clickable: true,
-                   tickColor: "#f9f9f9",
-                   borderWidth: 0
-               },
-               legend: {
-                   show: true
-               },
-               colors: ["#3FBAD8"],
-               xaxis: {ticks: 5, tickDecimals: 0},
-               yaxis: {ticks: 5, tickDecimals: 0}
-           }
-    );
-
-    function showTooltip(x, y, contents) {
+    function renderToolTipAtPointsWithText(point, toolTipText) {
         var toolTipElement = $("<div id='tooltip'>");
-        toolTipElement.html(contents);
+        toolTipElement.html(toolTipText);
         toolTipElement.css({
                                position: 'absolute',
                                display: 'none',
-                               top: y + 5,
-                               left: x + 5,
+                               top: point.y + 5,
+                               left: point.x + 5,
                                border: '1px solid #fdd',
                                padding: '2px',
                                'background-color': '#dfeffc',
@@ -77,26 +47,79 @@ $(document).ready(function () {
                            }).appendTo("body").fadeIn(200);
     }
 
-    var previousPoint = null;
-    chartElement.bind("plothover", function (event, pos, item) {
+    function renderChart() {
+        var data = generateChartDataFromDataPoints();
+
+        $.plot(chartElement, [
+            {
+                data: data, label: "Decreasing Rate"
+            }
+        ], {
+                   series: {
+                       lines: { show: true,
+                           lineWidth: 2
+                       },
+                       points: { show: true,
+                           lineWidth: 2
+                       },
+                       shadowSize: 0
+                   },
+                   grid: {
+                       hoverable: true,
+                       clickable: true,
+                       tickColor: "#f9f9f9",
+                       borderWidth: 0
+                   },
+                   legend: {
+                       show: true
+                   },
+                   colors: ["#3FBAD8"],
+                   xaxis: {ticks: 5, tickDecimals: 0},
+                   yaxis: {ticks: 5, tickDecimals: 0}
+               }
+        );
+    }
+
+    function showToolTipAtItem(item) {
+        if (previousPoint != item.dataIndex) {
+            previousPoint = item.dataIndex;
+
+            $("#tooltip").remove();
+            var x = item.datapoint[0].toFixed(0),
+                    y = item.datapoint[1].toFixed(2);
+
+            var point = {
+                x: item.pageX,
+                y: item.pageY
+            };
+
+            renderToolTipAtPointsWithText(point,
+                                          dataPoints[x].dateTime.format("ddd, MMM Do, h:mm") + " &asymp; " + y + "/h");
+        }
+    }
+
+    function hideToolTip() {
+        $("#tooltip").remove();
+        previousPoint = null;
+    }
+
+    function onPlotHover(pos, item) {
         $("#x").text(pos.x.toFixed(2));
         $("#y").text(pos.y.toFixed(2));
 
         if (item) {
-            if (previousPoint != item.dataIndex) {
-                previousPoint = item.dataIndex;
-
-                $("#tooltip").remove();
-                var x = item.datapoint[0].toFixed(0),
-                        y = item.datapoint[1].toFixed(2);
-
-                showTooltip(item.pageX, item.pageY,
-                            dataPoints[x].dateTime.format("ddd, MMM Do, h:mm") + " &asymp; " + y + "/h");
-            }
+            showToolTipAtItem(item);
         }
         else {
-            $("#tooltip").remove();
-            previousPoint = null;
+            hideToolTip();
         }
+    }
+
+    $(document).ready(function () {
+        renderChart();
+
+        chartElement.bind("plothover", function (event, pos, item) {
+            onPlotHover(pos, item);
+        });
     });
-});
+})(jQuery);
