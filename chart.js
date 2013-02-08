@@ -178,7 +178,7 @@
                     fontSize: '20px',
                     fontWeight: 'bold',
                     color: '#3FBAD8',
-                    marginLeft: '5px',
+                    marginLeft: '75px',
                     marginRight: '5px',
                     marginTop: '10px'
                 }
