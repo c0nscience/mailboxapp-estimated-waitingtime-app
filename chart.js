@@ -9,7 +9,8 @@
                 {dateTime: moment("02/07/2013 20:07", dateTimeFormat), queueSize: 270982},
                 {dateTime: moment("02/07/2013 22:15", dateTimeFormat), queueSize: 270900},
                 {dateTime: moment("02/08/2013 01:52", dateTimeFormat), queueSize: 270796},
-                {dateTime: moment("02/08/2013 02:16", dateTimeFormat), queueSize: 270776}
+                {dateTime: moment("02/08/2013 02:16", dateTimeFormat), queueSize: 270776},
+                {dateTime: moment("02/08/2013 04:02", dateTimeFormat), queueSize: 270712}
             ],
             firstDataPoint = dataPoints[0];
 
@@ -78,7 +79,7 @@
                 mode: "time",
                 tickFormatter: function (val, axis) {
                     var momentValue = moment(val);
-                    return momentValue.format("MM/DD HH:mm");
+                    return momentValue.format("HH:mm");
                 }
             },
             yaxis: {ticks: 5, tickDecimals: 0}
@@ -92,7 +93,7 @@
             previousPoint = dataIndex;
 
             $("#tooltip").remove();
-            var x = item.datapoint[0].toFixed(0),
+            var x = item.datapoint[0],
                     y = item.datapoint[1].toFixed(2);
 
             var point = {
@@ -101,7 +102,7 @@
             };
 
             renderToolTipAtPointsWithText(point,
-                                          dataPoints[dataIndex].dateTime.format("ddd, MMM Do, h:mm") + " &asymp; " + y + "/h");
+                                          moment(x).format("ddd, MMM Do, h:mm") + " &asymp; " + y + "/h");
         }
     }
 
