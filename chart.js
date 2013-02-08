@@ -179,10 +179,19 @@
         chartWrapper.append(estimatedDateElement);
     }
 
-    function renderAdditionalData() {
+    function renderEstAccessTime() {
         renderDataToChartWrapper("est. access time: ",
                                  calculatedData.accessMoment.format('MMMM Do YYYY, h:mm a'));
-        renderDataToChartWrapper("waited since: ", calculatedData.dateTimeDiff.toFixed(2) + " hours")
+    }
+
+    function renderWaitedSince() {
+        var waitedSince = moment().diff(firstDataPoint.dateTime) / 3600000;
+        renderDataToChartWrapper("waited since: ", (waitedSince).toFixed(2) + " hours")
+    }
+
+    function renderAdditionalData() {
+        renderEstAccessTime();
+        renderWaitedSince();
     }
 
     $(document).ready(function () {
