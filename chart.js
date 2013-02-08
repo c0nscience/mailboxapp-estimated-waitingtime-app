@@ -19,13 +19,8 @@
                 {dateTime: moment("02/08/2013 17:20", dateTimeFormat), queueSize: 268060},
                 {dateTime: moment("02/08/2013 18:20", dateTimeFormat), queueSize: 267185},
                 {dateTime: moment("02/08/2013 18:56", dateTimeFormat), queueSize: 266655},
-                {dateTime: moment("02/08/2013 20:20", dateTimeFormat), queueSize: 265424}
-//                {dateTime: moment("02/10/2013 18:20", dateTimeFormat), queueSize: 207185},
-//                {dateTime: moment("02/21/2013 18:20", dateTimeFormat), queueSize: 167185},
-//                {dateTime: moment("02/22/2013 18:20", dateTimeFormat), queueSize: 107185},
-//                {dateTime: moment("03/08/2013 18:20", dateTimeFormat), queueSize: 71850},
-//                {dateTime: moment("03/20/2013 18:20", dateTimeFormat), queueSize: 41850},
-//                {dateTime: moment("04/08/2013 18:20", dateTimeFormat), queueSize: 0}
+                {dateTime: moment("02/08/2013 20:20", dateTimeFormat), queueSize: 265424},
+                {dateTime: moment("02/08/2013 21:12", dateTimeFormat), queueSize: 264644}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length-1];
