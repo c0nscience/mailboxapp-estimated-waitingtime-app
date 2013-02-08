@@ -186,12 +186,11 @@
     }
 
     function renderWaitedSince() {
-        var waitedSince = moment().diff(firstDataPoint.dateTime.fromNow()) / 3600000;
         var waitedTimeString = "";
-        if (moment().isBefore(lastDataPoint.dateTime)) {
+        if (moment().isBefore(calculatedData.accessMoment)) {
             waitedTimeString = firstDataPoint.dateTime.fromNow();
         } else {
-            waitedTimeString = firstDataPoint.dateTime.from(lastDataPoint.dateTime);
+            waitedTimeString = firstDataPoint.dateTime.from(calculatedData.accessMoment);
         }
         renderDataToChartWrapper("start waiting ", waitedTimeString);
     }
