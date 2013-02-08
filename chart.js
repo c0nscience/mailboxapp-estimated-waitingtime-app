@@ -187,7 +187,7 @@
 
     function renderWaitedSince() {
         var waitedSince = moment().diff(firstDataPoint.dateTime.fromNow()) / 3600000;
-        renderDataToChartWrapper("waited since: ", firstDataPoint.dateTime.fromNow())
+        renderDataToChartWrapper("start waiting ", firstDataPoint.dateTime.fromNow())
     }
 
     function renderAdditionalData() {
