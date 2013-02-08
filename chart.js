@@ -1,6 +1,10 @@
 /*global $:false,jQuery:false */
 "use strict";
 (function ($) {
+    //TODO fix formatting
+    //TODO add more calculations ... estimated time to get acces and so on
+    //TODO think about what to display in chart
+    //TODO do not display the decreasing rate related to the previous, rather than display it a a burn down chart :D
     var chartWrapper = $("#chartWrapper"),
             chartPlaceholder = $("#chart"),
             dateTimeFormat = "MM/DD/YYYY HH:mm",
@@ -10,9 +14,11 @@
                 {dateTime: moment("02/07/2013 22:15", dateTimeFormat), queueSize: 270900},
                 {dateTime: moment("02/08/2013 01:52", dateTimeFormat), queueSize: 270796},
                 {dateTime: moment("02/08/2013 02:16", dateTimeFormat), queueSize: 270776},
-                {dateTime: moment("02/08/2013 04:02", dateTimeFormat), queueSize: 270712}
+                {dateTime: moment("02/08/2013 04:02", dateTimeFormat), queueSize: 270712},
+                {dateTime: moment("02/08/2013 17:20", dateTimeFormat), queueSize: 268060}
             ],
-            firstDataPoint = dataPoints[0];
+            firstDataPoint = dataPoints[0],
+            lastDataPoint = dataPoints[dataPoints.length-1];
 
     function generateChartDataFromDataPoints() {
         var series = [];
@@ -20,14 +26,7 @@
             var dateTime = dataPoint.dateTime,
                     queueSize = dataPoint.queueSize;
 
-            var previousDataPoint = dataPoints[index - 1];
-            if (previousDataPoint !== undefined) {
-                var dateTimeDiff = moment(previousDataPoint.dateTime).diff(dateTime) / 3600000,
-                    queueDiff = previousDataPoint.queueSize - queueSize,
-                    decreaseRate = queueDiff / dateTimeDiff;
-
-                series.push([dataPoint.dateTime, decreaseRate]);
-            }
+                series.push([dateTime, queueSize]);
         });
 
         return series;
@@ -52,7 +51,7 @@
         var data = [
             {
                 data: generateChartDataFromDataPoints(),
-                label: "Decreasing Rate"
+                label: "Queue Size"
             }
         ];
         var options = {
@@ -102,7 +101,7 @@
             };
 
             renderToolTipAtPointsWithText(point,
-                                          moment(x).format("ddd, MMM Do, h:mm") + " &asymp; " + y + "/h");
+                                          moment(x).format("ddd, MMM Do, h:mm") + ", qs = " + y);
         }
     }
 
