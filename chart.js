@@ -9,6 +9,7 @@
             chartPlaceholder = $("#chart"),
             dateTimeFormat = "MM/DD/YYYY HH:mm",
             previousPoint = null,
+            calculatedData = {},
             dataPoints = [
                 {dateTime: moment("02/07/2013 20:07", dateTimeFormat), queueSize: 270982},
                 {dateTime: moment("02/07/2013 22:15", dateTimeFormat), queueSize: 270900},
@@ -16,7 +17,9 @@
                 {dateTime: moment("02/08/2013 02:16", dateTimeFormat), queueSize: 270776},
                 {dateTime: moment("02/08/2013 04:02", dateTimeFormat), queueSize: 270712},
                 {dateTime: moment("02/08/2013 17:20", dateTimeFormat), queueSize: 268060},
-                {dateTime: moment("02/08/2013 18:20", dateTimeFormat), queueSize: 267185}
+                {dateTime: moment("02/08/2013 18:20", dateTimeFormat), queueSize: 267185},
+                {dateTime: moment("02/08/2013 18:56", dateTimeFormat), queueSize: 266655},
+                {dateTime: moment("02/08/2013 20:20", dateTimeFormat), queueSize: 265424}
 //                {dateTime: moment("02/10/2013 18:20", dateTimeFormat), queueSize: 207185},
 //                {dateTime: moment("02/21/2013 18:20", dateTimeFormat), queueSize: 167185},
 //                {dateTime: moment("02/22/2013 18:20", dateTimeFormat), queueSize: 107185},
@@ -39,25 +42,23 @@
         return series;
     }
 
-    function calcEstimatedAccessTime() {
-        var dateTimeDiff = lastDataPoint.dateTime.diff(firstDataPoint.dateTime) / 3600000,
-            queueSizeDiff = firstDataPoint.queueSize - lastDataPoint.queueSize,
-            decreasingRate = queueSizeDiff / dateTimeDiff,
-            timeToWait = firstDataPoint.queueSize / decreasingRate,
-            accessMoment = moment().add('hours', timeToWait);
+    function calculateData() {
+        calculatedData.dateTimeDiff = lastDataPoint.dateTime.diff(firstDataPoint.dateTime) / 3600000;
+        calculatedData.queueSizeDiff = firstDataPoint.queueSize - lastDataPoint.queueSize;
+        calculatedData.decreasingRate = calculatedData.queueSizeDiff / calculatedData.dateTimeDiff;
+        calculatedData.timeToWait = firstDataPoint.queueSize / calculatedData.decreasingRate;
+        calculatedData.accessMoment = moment().add('hours', calculatedData.timeToWait);
 
-        console.log("dtd: " + dateTimeDiff);
-        console.log("qsd: " + queueSizeDiff);
-        console.log("dr: " + decreasingRate);
-        console.log("ttw: " + timeToWait);
-        console.log("am: " + accessMoment.format('MMMM Do YYYY, h:mm:ss a'));
-
-        return accessMoment;
+        console.log("dtd: " + calculatedData.dateTimeDiff);
+        console.log("qsd: " + calculatedData.queueSizeDiff);
+        console.log("dr: " + calculatedData.decreasingRate);
+        console.log("ttw: " + calculatedData.timeToWait);
+        console.log("am: " + calculatedData.accessMoment.format('MMMM Do YYYY, h:mm:ss a'));
     }
 
     function generateIdealLineDataPoints() {
         var series = [],
-            estimatedAccessTime = calcEstimatedAccessTime();
+            estimatedAccessTime = calculatedData.accessMoment;
 
         series.push([firstDataPoint.dateTime, firstDataPoint.queueSize]);
         series.push([estimatedAccessTime, 0]);
@@ -159,8 +160,44 @@
         }
     }
 
+    function renderDataToChartWrapper(label, data) {
+        var estimatedDateElement = $('<div>'),
+            estimatedLabelElement = $('<span>');
+
+        estimatedLabelElement.html(label.toUpperCase());
+        estimatedLabelElement.css(
+                {
+                    color: '#999999',
+                    fontSize: '12px'
+                }
+        );
+
+        estimatedDateElement.html(data.toUpperCase());
+        estimatedDateElement.css(
+                {
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    color: '#3FBAD8',
+                    marginLeft: '5px',
+                    marginRight: '5px',
+                    marginTop: '10px'
+                }
+        );
+        estimatedDateElement.prepend(estimatedLabelElement);
+
+        chartWrapper.append(estimatedDateElement);
+    }
+
+    function renderAdditionalData() {
+        renderDataToChartWrapper("est. access time: ",
+                                 calculatedData.accessMoment.format('MMMM Do YYYY, h:mm a'));
+        renderDataToChartWrapper("waited since: ", calculatedData.dateTimeDiff.toFixed(2) + " hours")
+    }
+
     $(document).ready(function () {
+        calculateData()
         renderChart();
+        renderAdditionalData();
 
         chartPlaceholder.bind("plothover", function (event, pos, item) {
             onPlotHover(pos, item);
