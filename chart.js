@@ -2,7 +2,7 @@
 "use strict";
 (function ($) {
     var chartWrapper = $("#chartWrapper"),
-            chartElement = $("#chart"),
+            chartPlaceholder = $("#chart"),
             dateTimeFormat = "MM/DD/YYYY HH:mm",
             previousPoint = null,
             dataPoints = [
@@ -15,9 +15,9 @@
 
     function generateChartDataFromDataPoints() {
         var series = [];
-        $.each(dataPoints, function (index, datePoint) {
-            var dateTime = datePoint.dateTime,
-                    queueSize = datePoint.queueSize;
+        $.each(dataPoints, function (index, dataPoint) {
+            var dateTime = dataPoint.dateTime,
+                    queueSize = dataPoint.queueSize;
 
             var previousDataPoint = dataPoints[index - 1];
             if (previousDataPoint !== undefined) {
@@ -25,7 +25,7 @@
                     queueDiff = previousDataPoint.queueSize - queueSize,
                     decreaseRate = queueDiff / dateTimeDiff;
 
-                series.push([index, decreaseRate]);
+                series.push([dataPoint.dateTime, decreaseRate]);
             }
         });
 
@@ -48,41 +48,48 @@
     }
 
     function renderChart() {
-        var data = generateChartDataFromDataPoints();
-
-        $.plot(chartElement, [
+        var data = [
             {
-                data: data, label: "Decreasing Rate"
+                data: generateChartDataFromDataPoints(),
+                label: "Decreasing Rate"
             }
-        ], {
-                   series: {
-                       lines: { show: true,
-                           lineWidth: 2
-                       },
-                       points: { show: true,
-                           lineWidth: 2
-                       },
-                       shadowSize: 0
-                   },
-                   grid: {
-                       hoverable: true,
-                       clickable: true,
-                       tickColor: "#f9f9f9",
-                       borderWidth: 0
-                   },
-                   legend: {
-                       show: true
-                   },
-                   colors: ["#3FBAD8"],
-                   xaxis: {ticks: 5, tickDecimals: 0},
-                   yaxis: {ticks: 5, tickDecimals: 0}
-               }
-        );
+        ];
+        var options = {
+            series: {
+                lines: { show: true,
+                    lineWidth: 2
+                },
+                points: { show: true,
+                    lineWidth: 2
+                },
+                shadowSize: 0
+            },
+            grid: {
+                hoverable: true,
+                clickable: true,
+                tickColor: "#f9f9f9",
+                borderWidth: 0
+            },
+            legend: {
+                show: true
+            },
+            colors: ["#3FBAD8"],
+            xaxis: {
+                mode: "time",
+                tickFormatter: function (val, axis) {
+                    var momentValue = moment(val);
+                    return momentValue.format("MM/DD HH:mm");
+                }
+            },
+            yaxis: {ticks: 5, tickDecimals: 0}
+        };
+        $.plot(chartPlaceholder, data, options);
     }
 
     function showToolTipAtItem(item) {
-        if (previousPoint != item.dataIndex) {
-            previousPoint = item.dataIndex;
+        var dataIndex = item.dataIndex;
+        if (previousPoint != dataIndex) {
+            previousPoint = dataIndex;
 
             $("#tooltip").remove();
             var x = item.datapoint[0].toFixed(0),
@@ -94,7 +101,7 @@
             };
 
             renderToolTipAtPointsWithText(point,
-                                          dataPoints[x].dateTime.format("ddd, MMM Do, h:mm") + " &asymp; " + y + "/h");
+                                          dataPoints[dataIndex].dateTime.format("ddd, MMM Do, h:mm") + " &asymp; " + y + "/h");
         }
     }
 
@@ -118,7 +125,7 @@
     $(document).ready(function () {
         renderChart();
 
-        chartElement.bind("plothover", function (event, pos, item) {
+        chartPlaceholder.bind("plothover", function (event, pos, item) {
             onPlotHover(pos, item);
         });
     });
