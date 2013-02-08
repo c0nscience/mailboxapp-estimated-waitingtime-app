@@ -21,7 +21,7 @@
                 {dateTime: moment("02/08/2013 22:20", dateTimeFormat), queueSize: 263643},
                 {dateTime: moment("02/08/2013 22:38", dateTimeFormat), queueSize: 263381},
                 {dateTime: moment("02/08/2013 23:02", dateTimeFormat), queueSize: 263030},
-                {dateTime: moment("02/08/2013 00:18", dateTimeFormat), queueSize: 261907}
+                {dateTime: moment("02/09/2013 00:18", dateTimeFormat), queueSize: 261907}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length-1];
