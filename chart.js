@@ -15,7 +15,14 @@
                 {dateTime: moment("02/08/2013 01:52", dateTimeFormat), queueSize: 270796},
                 {dateTime: moment("02/08/2013 02:16", dateTimeFormat), queueSize: 270776},
                 {dateTime: moment("02/08/2013 04:02", dateTimeFormat), queueSize: 270712},
-                {dateTime: moment("02/08/2013 17:20", dateTimeFormat), queueSize: 268060}
+                {dateTime: moment("02/08/2013 17:20", dateTimeFormat), queueSize: 268060},
+                {dateTime: moment("02/08/2013 18:20", dateTimeFormat), queueSize: 267185}
+//                {dateTime: moment("02/10/2013 18:20", dateTimeFormat), queueSize: 207185},
+//                {dateTime: moment("02/21/2013 18:20", dateTimeFormat), queueSize: 167185},
+//                {dateTime: moment("02/22/2013 18:20", dateTimeFormat), queueSize: 107185},
+//                {dateTime: moment("03/08/2013 18:20", dateTimeFormat), queueSize: 71850},
+//                {dateTime: moment("03/20/2013 18:20", dateTimeFormat), queueSize: 41850},
+//                {dateTime: moment("04/08/2013 18:20", dateTimeFormat), queueSize: 0}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length-1];
@@ -28,6 +35,32 @@
 
                 series.push([dateTime, queueSize]);
         });
+
+        return series;
+    }
+
+    function calcEstimatedAccessTime() {
+        var dateTimeDiff = lastDataPoint.dateTime.diff(firstDataPoint.dateTime) / 3600000,
+            queueSizeDiff = firstDataPoint.queueSize - lastDataPoint.queueSize,
+            decreasingRate = queueSizeDiff / dateTimeDiff,
+            timeToWait = firstDataPoint.queueSize / decreasingRate,
+            accessMoment = moment().add('hours', timeToWait);
+
+        console.log("dtd: " + dateTimeDiff);
+        console.log("qsd: " + queueSizeDiff);
+        console.log("dr: " + decreasingRate);
+        console.log("ttw: " + timeToWait);
+        console.log("am: " + accessMoment.format('MMMM Do YYYY, h:mm:ss a'));
+
+        return accessMoment;
+    }
+
+    function generateIdealLineDataPoints() {
+        var series = [],
+            estimatedAccessTime = calcEstimatedAccessTime();
+
+        series.push([firstDataPoint.dateTime, firstDataPoint.queueSize]);
+        series.push([estimatedAccessTime, 0]);
 
         return series;
     }
@@ -52,6 +85,10 @@
             {
                 data: generateChartDataFromDataPoints(),
                 label: "Queue Size"
+            },
+            {
+                data: generateIdealLineDataPoints(),
+                label: "Ideal Line"
             }
         ];
         var options = {
