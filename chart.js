@@ -1,10 +1,6 @@
 /*global $:false,jQuery:false */
 "use strict";
 (function ($) {
-    //TODO fix formatting
-    //TODO add more calculations ... estimated time to get acces and so on
-    //TODO think about what to display in chart
-    //TODO do not display the decreasing rate related to the previous, rather than display it a a burn down chart :D
     var chartWrapper = $("#chartWrapper"),
             chartPlaceholder = $("#chart"),
             dateTimeFormat = "MM/DD/YYYY HH:mm",
