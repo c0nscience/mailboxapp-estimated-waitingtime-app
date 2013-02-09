@@ -22,10 +22,11 @@
                 {dateTime: moment("02/08/2013 22:38", dateTimeFormat), queueSize: 263381},
                 {dateTime: moment("02/08/2013 23:02", dateTimeFormat), queueSize: 263030},
                 {dateTime: moment("02/09/2013 00:18", dateTimeFormat), queueSize: 261907},
-                {dateTime: moment("02/09/2013 14:08", dateTimeFormat), queueSize: 249783}
+                {dateTime: moment("02/09/2013 14:08", dateTimeFormat), queueSize: 249783},
+                {dateTime: moment("02/09/2013 14:56", dateTimeFormat), queueSize: 249072}
             ],
             firstDataPoint = dataPoints[0],
-            lastDataPoint = dataPoints[dataPoints.length-1];
+            lastDataPoint = dataPoints[dataPoints.length - 1];
 
     function generateChartDataFromDataPoints() {
         var series = [];
@@ -33,7 +34,7 @@
             var dateTime = dataPoint.dateTime,
                     queueSize = dataPoint.queueSize;
 
-                series.push([dateTime, queueSize]);
+            series.push([dateTime, queueSize]);
         });
 
         return series;
@@ -55,7 +56,7 @@
 
     function generateIdealLineDataPoints() {
         var series = [],
-            estimatedAccessTime = calculatedData.accessMoment;
+                estimatedAccessTime = calculatedData.accessMoment;
 
         series.push([firstDataPoint.dateTime, firstDataPoint.queueSize]);
         series.push([estimatedAccessTime, 0]);
@@ -159,7 +160,7 @@
 
     function renderDataToChartWrapper(label, data) {
         var estimatedDateElement = $('<div>'),
-            estimatedLabelElement = $('<span>');
+                estimatedLabelElement = $('<span>');
 
         estimatedLabelElement.html(label.toUpperCase());
         estimatedLabelElement.css(
