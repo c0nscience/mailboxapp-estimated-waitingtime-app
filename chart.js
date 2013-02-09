@@ -201,8 +201,18 @@
         renderDataToChartWrapper("start waiting ", waitedTimeString);
     }
 
+    function renderDecreasingRate() {
+        renderDataToChartWrapper("decreasing rate: ", calculatedData.decreasingRate.toFixed(2) + "/h")
+    }
+
+    function renderTimeToWait() {
+        renderDataToChartWrapper("get access ", calculatedData.accessMoment.fromNow())
+    }
+
     function renderAdditionalData() {
         renderEstAccessTime();
+        renderTimeToWait();
+        renderDecreasingRate();
         renderWaitedSince();
     }
 
