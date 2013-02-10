@@ -8,26 +8,15 @@
             calculatedData = {},
             dataPoints = [
                 {dateTime: moment("02/07/2013 20:07", dateTimeFormat), queueSize: 270982},
-                {dateTime: moment("02/07/2013 22:15", dateTimeFormat), queueSize: 270900},
-                {dateTime: moment("02/08/2013 01:52", dateTimeFormat), queueSize: 270796},
-                {dateTime: moment("02/08/2013 02:16", dateTimeFormat), queueSize: 270776},
                 {dateTime: moment("02/08/2013 04:02", dateTimeFormat), queueSize: 270712},
                 {dateTime: moment("02/08/2013 17:20", dateTimeFormat), queueSize: 268060},
-                {dateTime: moment("02/08/2013 18:20", dateTimeFormat), queueSize: 267185},
-                {dateTime: moment("02/08/2013 18:56", dateTimeFormat), queueSize: 266655},
-                {dateTime: moment("02/08/2013 20:20", dateTimeFormat), queueSize: 265424},
-                {dateTime: moment("02/08/2013 21:12", dateTimeFormat), queueSize: 264644},
-                {dateTime: moment("02/08/2013 21:50", dateTimeFormat), queueSize: 264094},
-                {dateTime: moment("02/08/2013 22:20", dateTimeFormat), queueSize: 263643},
-                {dateTime: moment("02/08/2013 22:38", dateTimeFormat), queueSize: 263381},
-                {dateTime: moment("02/08/2013 23:02", dateTimeFormat), queueSize: 263030},
                 {dateTime: moment("02/09/2013 00:18", dateTimeFormat), queueSize: 261907},
                 {dateTime: moment("02/09/2013 14:08", dateTimeFormat), queueSize: 249783},
-                {dateTime: moment("02/09/2013 14:56", dateTimeFormat), queueSize: 249072},
                 {dateTime: moment("02/09/2013 21:27", dateTimeFormat), queueSize: 244263},
                 {dateTime: moment("02/10/2013 09:49", dateTimeFormat), queueSize: 238800},
                 {dateTime: moment("02/10/2013 13:49", dateTimeFormat), queueSize: 237956},
-                {dateTime: moment("02/10/2013 17:10", dateTimeFormat), queueSize: 235470}
+                {dateTime: moment("02/10/2013 17:10", dateTimeFormat), queueSize: 235470},
+                {dateTime: moment("02/10/2013 22:11", dateTimeFormat), queueSize: 228822}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length - 1];
