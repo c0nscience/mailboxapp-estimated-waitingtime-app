@@ -127,7 +127,7 @@
                 var fillRate = calculateFillRate(index);
                 series.push([dateTime, fillRate]);
             } else {
-                series.push([firstDataPoint.dateTime, 0]);
+                series.push([dataPoints[index], 0]);
             }
         });
 
