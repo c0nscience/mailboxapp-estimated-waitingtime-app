@@ -36,16 +36,16 @@
     });
 
     function calculateAdditionalData() {
-        calculatedData.decreasingRate = calculateDecreasingRate(dataPoints.length - 1);
-        calculatedData.timeToWait = lastDataPoint.queueSize / calculatedData.decreasingRate;
+        calculatedData.fillRate = calculateFillRate(dataPoints.length - 1);
+        calculatedData.timeToWait = lastDataPoint.queueSize / calculatedData.fillRate;
         calculatedData.accessMoment = moment().add('hours', calculatedData.timeToWait);
 
-        console.log("dr: " + calculatedData.decreasingRate);
+        console.log("dr: " + calculatedData.fillRate);
         console.log("ttw: " + calculatedData.timeToWait);
         console.log("am: " + calculatedData.accessMoment.format('MMMM Do YYYY, h:mm:ss a'));
     }
 
-    function calculateDecreasingRate(index) {
+    function calculateFillRate(index) {
         var previous = dataPoints[index - 1];
         var actual = dataPoints[index];
 
@@ -57,6 +57,11 @@
 
     function renderChart() {
         var data = [
+            {
+                data: generateFillRateData(),
+                label: "Fill Rate",
+                yaxis: 2
+            },
             {
                 data: generateChartDataFromDataPoints(),
                 label: "Queue Size"
@@ -87,7 +92,7 @@
             legend: {
                 show: true
             },
-            colors: ["#3FBAD8", "#ff5454"],
+            colors: ["#00FF00", "#3FBAD8", "#ff5454"],
             xaxis: {
                 mode: "time",
                 tickFormatter: function (val, axis) {
@@ -112,6 +117,22 @@
         return series;
     }
 
+    function generateFillRateData() {
+        var series = [];
+
+        $.each(dataPoints, function (index, dataPoint) {
+            if (index > 0) {
+                var dateTime = dataPoint.dateTime;
+                var fillRate = calculateFillRate(index);
+                series.push([dateTime, fillRate]);
+            } else {
+                series.push([firstDataPoint.dateTime, 0]);
+            }
+        });
+
+        return series;
+    }
+
     function renderAdditionalData() {
         renderEstAccessTime();
         renderTimeToWait();
@@ -129,7 +150,7 @@
     }
 
     function renderDecreasingRate() {
-        renderDataToChartWrapper("decreasing rate: ", calculatedData.decreasingRate.toFixed(2) + "/h")
+        renderDataToChartWrapper("fill rate: ", calculatedData.fillRate.toFixed(2) + "/h")
     }
 
     function renderWaitedSince() {
@@ -189,7 +210,7 @@
 
             $("#tooltip").remove();
             var x = item.datapoint[0],
-                    y = item.datapoint[1];
+                    y = item.datapoint[1].toFixed(2);
 
             var point = {
                 x: item.pageX,
