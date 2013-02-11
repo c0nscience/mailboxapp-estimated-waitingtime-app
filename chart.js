@@ -18,60 +18,41 @@
                 {dateTime: moment("02/10/2013 17:10", dateTimeFormat), queueSize: 235470},
                 {dateTime: moment("02/10/2013 22:11", dateTimeFormat), queueSize: 228822},
                 {dateTime: moment("02/11/2013 01:12", dateTimeFormat), queueSize: 225295},
-                {dateTime: moment("02/11/2013 13:34", dateTimeFormat), queueSize: 210903}
+                {dateTime: moment("02/11/2013 13:34", dateTimeFormat), queueSize: 210903},
+                {dateTime: moment("02/11/2013 16:44", dateTimeFormat), queueSize: 207200},
+                {dateTime: moment("02/11/2013 18:34", dateTimeFormat), queueSize: 205070}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length - 1];
 
-    function generateChartDataFromDataPoints() {
-        var series = [];
-        $.each(dataPoints, function (index, dataPoint) {
-            var dateTime = dataPoint.dateTime,
-                    queueSize = dataPoint.queueSize;
+    $(document).ready(function () {
+        calculateAdditionalData()
+        renderChart();
+        renderAdditionalData();
 
-            series.push([dateTime, queueSize]);
+        chartPlaceholder.bind("plothover", function (event, pos, item) {
+            onPlotHover(pos, item);
         });
+    });
 
-        return series;
-    }
-
-    function calculateData() {
-        calculatedData.dateTimeDiff = lastDataPoint.dateTime.diff(firstDataPoint.dateTime) / 3600000;
-        calculatedData.queueSizeDiff = firstDataPoint.queueSize - lastDataPoint.queueSize;
-        calculatedData.decreasingRate = calculatedData.queueSizeDiff / calculatedData.dateTimeDiff;
-        calculatedData.timeToWait = firstDataPoint.queueSize / calculatedData.decreasingRate;
+    function calculateAdditionalData() {
+        calculatedData.decreasingRate = calculateDecreasingRate(dataPoints.length - 1);
+        calculatedData.timeToWait = lastDataPoint.queueSize / calculatedData.decreasingRate;
         calculatedData.accessMoment = moment().add('hours', calculatedData.timeToWait);
 
-        console.log("dtd: " + calculatedData.dateTimeDiff);
-        console.log("qsd: " + calculatedData.queueSizeDiff);
         console.log("dr: " + calculatedData.decreasingRate);
         console.log("ttw: " + calculatedData.timeToWait);
         console.log("am: " + calculatedData.accessMoment.format('MMMM Do YYYY, h:mm:ss a'));
     }
 
-    function generateIdealLineDataPoints() {
-        var series = [],
-                estimatedAccessTime = calculatedData.accessMoment;
+    function calculateDecreasingRate(index) {
+        var previous = dataPoints[index - 1];
+        var actual = dataPoints[index];
 
-        series.push([firstDataPoint.dateTime, firstDataPoint.queueSize]);
-        series.push([estimatedAccessTime, 0]);
+        var dateTimeDiff = previous.dateTime.diff(actual.dateTime) / -3600000;
+        var queueSizeDiff = previous.queueSize - actual.queueSize;
 
-        return series;
-    }
-
-    function renderToolTipAtPointsWithText(point, toolTipText) {
-        var toolTipElement = $("<div id='tooltip'>");
-        toolTipElement.html(toolTipText);
-        toolTipElement.css({
-                               position: 'absolute',
-                               display: 'none',
-                               top: point.y + 5,
-                               left: point.x + 5,
-                               border: '1px solid #fdd',
-                               padding: '2px',
-                               'background-color': '#dfeffc',
-                               opacity: 0.80
-                           }).appendTo("body").fadeIn(200);
+        return queueSizeDiff / dateTimeDiff;
     }
 
     function renderChart() {
@@ -81,8 +62,10 @@
                 label: "Queue Size"
             },
             {
-                data: generateIdealLineDataPoints(),
-                label: "Ideal Line"
+                data: [
+                    [calculatedData.accessMoment, 0]
+                ],
+                label: "Access Date"
             }
         ];
         var options = {
@@ -117,40 +100,46 @@
         $.plot(chartPlaceholder, data, options);
     }
 
-    function showToolTipAtItem(item) {
-        var dataIndex = item.dataIndex;
-        if (previousPoint != dataIndex) {
-            previousPoint = dataIndex;
+    function generateChartDataFromDataPoints() {
+        var series = [];
+        $.each(dataPoints, function (index, dataPoint) {
+            var dateTime = dataPoint.dateTime,
+                    queueSize = dataPoint.queueSize;
 
-            $("#tooltip").remove();
-            var x = item.datapoint[0],
-                    y = item.datapoint[1];
+            series.push([dateTime, queueSize]);
+        });
 
-            var point = {
-                x: item.pageX,
-                y: item.pageY
-            };
-
-            renderToolTipAtPointsWithText(point,
-                                          moment(x).format("ddd, MMM Do, h:mm") + ", qs = " + y);
-        }
+        return series;
     }
 
-    function hideToolTip() {
-        $("#tooltip").remove();
-        previousPoint = null;
+    function renderAdditionalData() {
+        renderEstAccessTime();
+        renderTimeToWait();
+        renderDecreasingRate();
+        renderWaitedSince();
     }
 
-    function onPlotHover(pos, item) {
-        $("#x").text(pos.x.toFixed(2));
-        $("#y").text(pos.y.toFixed(2));
+    function renderEstAccessTime() {
+        renderDataToChartWrapper("est. access time: ",
+                                 calculatedData.accessMoment.format('MMMM Do YYYY, h:mm a'));
+    }
 
-        if (item) {
-            showToolTipAtItem(item);
+    function renderTimeToWait() {
+        renderDataToChartWrapper("get access ", calculatedData.accessMoment.fromNow())
+    }
+
+    function renderDecreasingRate() {
+        renderDataToChartWrapper("decreasing rate: ", calculatedData.decreasingRate.toFixed(2) + "/h")
+    }
+
+    function renderWaitedSince() {
+        var waitedTimeString = "";
+        if (moment().isBefore(calculatedData.accessMoment)) {
+            waitedTimeString = firstDataPoint.dateTime.fromNow();
+        } else {
+            waitedTimeString = firstDataPoint.dateTime.from(calculatedData.accessMoment);
         }
-        else {
-            hideToolTip();
-        }
+        renderDataToChartWrapper("start waiting ", waitedTimeString);
     }
 
     function renderDataToChartWrapper(label, data) {
@@ -181,43 +170,54 @@
         chartWrapper.append(estimatedDateElement);
     }
 
-    function renderEstAccessTime() {
-        renderDataToChartWrapper("est. access time: ",
-                                 calculatedData.accessMoment.format('MMMM Do YYYY, h:mm a'));
-    }
+    function onPlotHover(pos, item) {
+        $("#x").text(pos.x.toFixed(2));
+        $("#y").text(pos.y.toFixed(2));
 
-    function renderWaitedSince() {
-        var waitedTimeString = "";
-        if (moment().isBefore(calculatedData.accessMoment)) {
-            waitedTimeString = firstDataPoint.dateTime.fromNow();
-        } else {
-            waitedTimeString = firstDataPoint.dateTime.from(calculatedData.accessMoment);
+        if (item) {
+            showToolTipAtItem(item);
         }
-        renderDataToChartWrapper("start waiting ", waitedTimeString);
+        else {
+            hideToolTip();
+        }
     }
 
-    function renderDecreasingRate() {
-        renderDataToChartWrapper("decreasing rate: ", calculatedData.decreasingRate.toFixed(2) + "/h")
+    function showToolTipAtItem(item) {
+        var dataIndex = item.dataIndex;
+        if (previousPoint != dataIndex) {
+            previousPoint = dataIndex;
+
+            $("#tooltip").remove();
+            var x = item.datapoint[0],
+                    y = item.datapoint[1];
+
+            var point = {
+                x: item.pageX,
+                y: item.pageY
+            };
+
+            renderToolTipAtPointsWithText(point,
+                                          moment(x).format("ddd, MMM Do, h:mm") + ", qs = " + y);
+        }
     }
 
-    function renderTimeToWait() {
-        renderDataToChartWrapper("get access ", calculatedData.accessMoment.fromNow())
+    function renderToolTipAtPointsWithText(point, toolTipText) {
+        var toolTipElement = $("<div id='tooltip'>");
+        toolTipElement.html(toolTipText);
+        toolTipElement.css({
+                               position: 'absolute',
+                               display: 'none',
+                               top: point.y + 5,
+                               left: point.x + 5,
+                               border: '1px solid #fdd',
+                               padding: '2px',
+                               'background-color': '#dfeffc',
+                               opacity: 0.80
+                           }).appendTo("body").fadeIn(200);
     }
 
-    function renderAdditionalData() {
-        renderEstAccessTime();
-        renderTimeToWait();
-        renderDecreasingRate();
-        renderWaitedSince();
+    function hideToolTip() {
+        $("#tooltip").remove();
+        previousPoint = null;
     }
-
-    $(document).ready(function () {
-        calculateData()
-        renderChart();
-        renderAdditionalData();
-
-        chartPlaceholder.bind("plothover", function (event, pos, item) {
-            onPlotHover(pos, item);
-        });
-    });
 })(jQuery);
