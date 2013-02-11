@@ -20,7 +20,8 @@
                 {dateTime: moment("02/11/2013 01:12", dateTimeFormat), queueSize: 225295},
                 {dateTime: moment("02/11/2013 13:34", dateTimeFormat), queueSize: 210903},
                 {dateTime: moment("02/11/2013 16:44", dateTimeFormat), queueSize: 207200},
-                {dateTime: moment("02/11/2013 18:34", dateTimeFormat), queueSize: 205070}
+                {dateTime: moment("02/11/2013 18:34", dateTimeFormat), queueSize: 205070},
+                {dateTime: moment("02/11/2013 22:28", dateTimeFormat), queueSize: 200646}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length - 1];
@@ -59,18 +60,18 @@
         var data = [
             {
                 data: generateFillRateData(),
-                label: "Fill Rate",
+                label: " Fill Rate",
                 yaxis: 2
             },
             {
                 data: generateChartDataFromDataPoints(),
-                label: "Queue Size"
+                label: " Queue Size"
             },
             {
                 data: [
                     [calculatedData.accessMoment, 0]
                 ],
-                label: "Access Date"
+                label: " Access Date"
             }
         ];
         var options = {
