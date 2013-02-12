@@ -64,6 +64,15 @@
 
     function renderChart() {
         var data = [
+//            {
+//                data: generatePeopleBehindRateData(),
+//                label: "people behind increasing rate",
+//                yaxis: 3
+//            },
+//            {
+//                data: generatePeopleBehindDataPoints(),
+//                label: "people behind"
+//            },
             {
                 data: generateFillRateData(),
                 label: " Fill Rate",
@@ -99,7 +108,13 @@
             legend: {
                 show: true
             },
-            colors: ["#00FF00", "#3FBAD8", "#ff5454"],
+            colors: [
+//                "#BBBBBB",
+//                "#666666",
+                "#00FF00",
+                "#3FBAD8",
+                "#ff5454"
+            ],
             xaxis: {
                 mode: "time",
                 tickFormatter: function (val, axis) {
@@ -110,6 +125,56 @@
             yaxis: {ticks: 5, tickDecimals: 0}
         };
         $.plot(chartPlaceholder, data, options);
+    }
+
+    function calculatePeopleBehindFillRate(index) {
+        var actual = dataPoints[index];
+        var previous = dataPoints[index - 1];
+
+        if (previous.peopleBehind == undefined) {
+            for (var i = index - 1; i >= 0; i--) {
+                if (dataPoints[i].peopleBehind !== undefined) {
+                    previous = dataPoints[i];
+                }
+            }
+        }
+
+        var dateTimeDiff = previous.dateTime.diff(actual.dateTime) / -3600000;
+        var peopleBehindDiff = actual.peopleBehind - previous.peopleBehind;
+
+        return peopleBehindDiff / dateTimeDiff;
+    }
+
+    function generatePeopleBehindRateData() {
+        var series = [];
+
+        $.each(dataPoints, function (index, dataPoint) {
+            if (dataPoint.peopleBehind !== undefined) {
+                if (index > 0) {
+                    var dateTime = dataPoint.dateTime;
+                    var fillRate = calculatePeopleBehindFillRate(index);
+                    series.push([dateTime, fillRate]);
+                } else {
+                    series.push([dataPoint.dateTime, 0]);
+                }
+            }
+        });
+
+        return series;
+    }
+
+    function generatePeopleBehindDataPoints() {
+        var series = [];
+
+        $.each(dataPoints, function (index, dataPoint) {
+            var dateTime = dataPoint.dateTime,
+                    peopleBehind = dataPoint.peopleBehind;
+            if (peopleBehind !== undefined) {
+                series.push([dateTime, peopleBehind]);
+            }
+        });
+
+        return series;
     }
 
     function generateChartDataFromDataPoints() {
@@ -133,7 +198,7 @@
                 var fillRate = calculateFillRate(index);
                 series.push([dateTime, fillRate]);
             } else {
-                series.push([dataPoints[index], 0]);
+                series.push([dataPoint.dateTime, 0]);
             }
         });
 
