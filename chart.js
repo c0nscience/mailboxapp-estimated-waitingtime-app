@@ -34,7 +34,9 @@
                 {dateTime: moment("02/13/2013 14:44", dateTimeFormat), queueSize: 153622, peopleBehind: 624807},
                 {dateTime: moment("02/13/2013 16:36", dateTimeFormat), queueSize: 151396, peopleBehind: 628083},
                 {dateTime: moment("02/13/2013 18:47", dateTimeFormat), queueSize: 148790, peopleBehind: 632355},
-                {dateTime: moment("02/14/2013 00:26", dateTimeFormat), queueSize: 142091, peopleBehind: 643495}
+                {dateTime: moment("02/14/2013 00:26", dateTimeFormat), queueSize: 142091, peopleBehind: 643495},
+                {dateTime: moment("02/14/2013 03:57", dateTimeFormat), queueSize: 137935, peopleBehind: 648400},
+                {dateTime: moment("02/14/2013 09:07", dateTimeFormat), queueSize: 133098, peopleBehind: 654553}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length - 1];
