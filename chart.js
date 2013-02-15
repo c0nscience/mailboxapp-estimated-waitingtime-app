@@ -37,7 +37,13 @@
                 {dateTime: moment("02/14/2013 00:26", dateTimeFormat), queueSize: 142091, peopleBehind: 643495},
                 {dateTime: moment("02/14/2013 03:57", dateTimeFormat), queueSize: 137935, peopleBehind: 648400},
                 {dateTime: moment("02/14/2013 09:07", dateTimeFormat), queueSize: 133098, peopleBehind: 654553},
-                {dateTime: moment("02/14/2013 12:13", dateTimeFormat), queueSize: 129727, peopleBehind: 657520}
+                {dateTime: moment("02/14/2013 12:13", dateTimeFormat), queueSize: 129727, peopleBehind: 657520},
+                {dateTime: moment("02/14/2013 16:17", dateTimeFormat), queueSize: 124646, peopleBehind: 662135},
+                {dateTime: moment("02/14/2013 20:39", dateTimeFormat), queueSize: 121937, peopleBehind: 667006},
+                {dateTime: moment("02/14/2013 21:25", dateTimeFormat), queueSize: 121937, peopleBehind: 667930},
+                {dateTime: moment("02/14/2013 22:15", dateTimeFormat), queueSize: 121937, peopleBehind: 668950},
+                {dateTime: moment("02/15/2013 11:35", dateTimeFormat), queueSize: 117876, peopleBehind: 679917},
+                {dateTime: moment("02/15/2013 12:39", dateTimeFormat), queueSize: 117355, peopleBehind: 680612}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length - 1];
