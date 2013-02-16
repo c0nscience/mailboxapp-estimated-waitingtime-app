@@ -52,7 +52,11 @@
                 {dateTime: moment("02/15/2013 22:22", dateTimeFormat), queueSize: 112546, peopleBehind: 689646},
                 {dateTime: moment("02/15/2013 23:34", dateTimeFormat), queueSize: 111958, peopleBehind: 690702},
                 {dateTime: moment("02/16/2013 02:15", dateTimeFormat), queueSize: 110626, peopleBehind: 692599},
-                {dateTime: moment("02/16/2013 03:00", dateTimeFormat), queueSize: 110258, peopleBehind: 693053}
+                {dateTime: moment("02/16/2013 03:00", dateTimeFormat), queueSize: 110258, peopleBehind: 693053},
+                {dateTime: moment("02/16/2013 11:41", dateTimeFormat), queueSize: 105970, peopleBehind: 697984},
+                {dateTime: moment("02/16/2013 16:29", dateTimeFormat), queueSize: 103596, peopleBehind: 701350},
+                {dateTime: moment("02/16/2013 19:57", dateTimeFormat), queueSize: 101858, peopleBehind: 704534},
+                {dateTime: moment("02/16/2013 22:16", dateTimeFormat), queueSize: 100329, peopleBehind: 706590}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length - 1];
