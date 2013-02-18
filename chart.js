@@ -66,7 +66,9 @@
                 {dateTime: moment("02/18/2013 13:14", dateTimeFormat), queueSize: 74789, peopleBehind: 737698},
                 {dateTime: moment("02/18/2013 14:10", dateTimeFormat), queueSize: 74173, peopleBehind: 738311},
                 {dateTime: moment("02/18/2013 17:45", dateTimeFormat), queueSize: 71827, peopleBehind: 741221},
-                {dateTime: moment("02/18/2013 19:31", dateTimeFormat), queueSize: 70630, peopleBehind: 742956}
+                {dateTime: moment("02/18/2013 19:31", dateTimeFormat), queueSize: 70630, peopleBehind: 742956},
+                {dateTime: moment("02/18/2013 23:13", dateTimeFormat), queueSize: 67604, peopleBehind: 747032},
+                {dateTime: moment("02/19/2013 00:19", dateTimeFormat), queueSize: 66696, peopleBehind: 748116}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length - 1];
@@ -85,10 +87,6 @@
         calculatedData.fillRate = calculateFillRate(dataPoints.length - 1);
         calculatedData.timeToWait = lastDataPoint.queueSize / calculatedData.fillRate;
         calculatedData.accessMoment = moment().add('hours', calculatedData.timeToWait);
-
-        console.log("dr: " + calculatedData.fillRate);
-        console.log("ttw: " + calculatedData.timeToWait);
-        console.log("am: " + calculatedData.accessMoment.format('MMMM Do YYYY, h:mm:ss a'));
     }
 
     function calculateFillRate(index) {
@@ -158,7 +156,7 @@
                 mode: "time",
                 tickFormatter: function (val, axis) {
                     var momentValue = moment(val);
-                    return momentValue.format("HH:mm");
+                    return momentValue.format("MM.DD");
                 }
             },
             yaxis: {ticks: 5, tickDecimals: 0}
