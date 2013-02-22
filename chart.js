@@ -80,7 +80,8 @@
                 {dateTime: moment("02/21/2013 06:26", dateTimeFormat), queueSize: 22616, peopleBehind: 791691},
                 {dateTime: moment("02/21/2013 16:50", dateTimeFormat), queueSize: 14169, peopleBehind: 796364},
                 {dateTime: moment("02/21/2013 20:44", dateTimeFormat), queueSize: 11049, peopleBehind: 798725},
-                {dateTime: moment("02/21/2013 23:32", dateTimeFormat), queueSize: 8810, peopleBehind: 801726}
+                {dateTime: moment("02/21/2013 23:32", dateTimeFormat), queueSize: 8810, peopleBehind: 801726},
+                {dateTime: moment("02/22/2013 11:19", dateTimeFormat), queueSize: 0}
             ],
             firstDataPoint = dataPoints[0],
             lastDataPoint = dataPoints[dataPoints.length - 1];
